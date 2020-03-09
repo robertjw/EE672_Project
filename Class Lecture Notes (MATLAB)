@@ -1,0 +1,213 @@
+%% 24 Jan 2020
+clc
+clear all
+close all
+
+num = [1, 1]; % numerator ? + 1
+den = [1, 0.3, 0.02, 0]; % denominator ?3 + 0.3?2 + 0.02z
+[r,p,k] = residue(num,den) % p = poles, r = residues, k = coefficients of remainder polynomial.
+
+%% 27 Jan 2020
+clc
+clear all
+close all
+
+num = 5*[1, 3];
+den1 = [1, -.1, 0];
+den2 = [1, 1, 0.5];
+denp = conv(den1, den2) % Multiply polynomials
+[r,p,k] = residue(num,denp) % p = poles, r = residues, k = coefficients of remainder polynomial.
+
+%EX 2.18
+z = tf ('z', 0.1);
+f = z^2*(z-3)/((z-1)*(z-.1)*(z-.2))
+f1 = f*(z-1)
+f2 = minreal(f1)
+evalfr(f2,1)
+%% 31 Jan 2020
+clc
+clear all
+close all
+
+T = 0.02; % Sampling Period
+g = zpk([],[0.1,0.5],1,T) % Transfer Function
+z1 = exp(j*0.04) % w=2 rad/s, wT=0.04
+f_resp = evalfr(g,z1) % Evauluate at z=z1
+w = [1,2,3];
+wgrid = exp(j.*w*0.02); % . means element-by-element
+H = freqresp(g,wgrid) % Evaluate at freq. grid w
+
+figure(1) 
+bode(g)
+figure(2) 
+nichols(g)
+[Magnitude,Phase,w] = bode(g)
+[Real,Imag] = nyquist(g,w)
+% Nyquist Data Output: multidimensional array
+mag = reshape(Magnitude,1,length(w));
+figure(3)
+plot(w,mag)
+figure(4)
+plot(w,Magnitude(:))
+%% 3 Feb 2020
+clc
+clear all
+close all
+
+g1 = zpk([],-1,1);
+figure(1)
+bode(g1)
+
+g2 = tf(1,[1,1,1]);
+wd = 0.866
+ws = 35*wd
+figure(2)
+bode(g2)
+%% 12 Feb 2020
+clc
+clear all
+close all
+
+num = [1];
+den = [1,0.1,0.5,.7];
+g = tf(num,den,0.01)
+roots(den)
+
+ddamp(den)
+
+roots([1,.1,.01])
+%% 14 Feb 2020
+clc
+clear all
+close all
+
+T = 0.1;
+
+numg = 0.5848*[-0.3549,1];
+deng = [0.1828, 0.8627,1];
+g = tf(numg,deng)
+
+numc = [0.8149,0.7655];
+denc = [1,1.334];
+c = zpk(numc,denc,10,T)
+
+gd = c2d(g,T)
+gc = (c)/(1+gd*c)
+gr = minreal(gc)
+%% 14 Feb 2020
+clc
+clear all
+close all
+
+a = [1, 2.6, -0.56, -2.05, 0.0775, 0.35]
+a(1,:) = fliplr(a)
+a(2,:) = a
+j=3;
+% for i = 1:(length(a)-1) 
+%   a(j,i) = det(a(j-2,[1,i+1]); a(j-1,[1,i+1]));
+% end
+
+%% 21 Feb 2020
+clc
+clear all
+close all
+
+num = [1];
+den = [1,3,0];
+
+[r,p,k] = residue(num,den)
+T = 0.02;
+
+s = tf('s');
+g = 1/(s+3)
+c2d(g,T)
+% Example 2
+num2 = [1]; % K
+den2 = [1,10,0,0];
+
+[r2,p2,k2] = residue(num2,den2)
+
+T2 = 0.05;
+g2 = 1/s/(s+10)
+c2d(g2,T2)
+
+%% 26 Feb 2020
+clc
+clear all
+close all
+
+g1 = tf([10],[1,2,10])
+g2 = tf([10,10],[1,2,10])
+step(g1,'--r')
+hold on 
+step(g2)
+%% 28 Feb 2020
+clc
+clear all
+close all
+
+s = tf('s');
+a = 10;
+p = 4;
+k = 10;
+
+% g = k*(s+a)/(s*(s+p))
+% c = k*(s+a)
+
+g = 1/(s^2+49*s)
+c = 1225
+
+controlSystemDesigner(g,c)
+%% 2 Mar 2020
+clc
+clear all
+close all
+
+s = tf('s')
+j = sqrt(-1);
+zeta = 0.7;
+wn = 10;
+p = 4;
+Scl = wn*exp(j*(pi-acos(zeta)))
+
+g=zpk([],[0,-p],1);
+theta=pi-(angle(evalfr(g,Scl)))
+
+wd = wn*sqrt(1-zeta^2)/tan(theta);
+a = wd+zeta*wn
+k = 1/abs(evalfr(tf([1,a],1)*g,Scl))
+
+% controlSystemDesigner(g*k*(s+a),1)
+
+err = .25;
+Ka = (err)*p*100
+
+k_b = 1/abs(evalfr(tf([1,10],[1,p,0]),Scl))
+
+% controlSystemDesigner(s/(s^2+4*s+100),1)
+
+rlocus(s/(s^2+4*s+100))
+sgrid(0.7,10)
+%% 2 Mar 2020
+clc
+clear all
+close all
+
+s = tf('s');
+zeta = 0.7;
+wn = 4;
+g = 1/(s*(s+10))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
